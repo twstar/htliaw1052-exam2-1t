@@ -1,0 +1,166 @@
+package tw.fc.algb ;
+import tw.fc.*;
+
+//**********    ImuZp.java    ****************
+//
+//  integer modulo n
+//
+
+public class ImuZp 
+   implements DuplicableI, PrintableI, WidthPrintableI
+{
+   final int MODULO;
+   int value;   
+
+   //------------------------------------------------------   
+// private ImuZp(){ } //: 此generic class須設mod, 故禁用. 
+
+   public ImuZp(int m, int x) {  
+      if(m<2) throw new RuntimeException("illegal modulo: "+m);    
+      ImuZp.assertPrime(m);
+      MODULO=m;   value=x; 
+      reduce();  
+   }
+//   private ImuZp(int m) { //:  防m誤為x, 禁用
+//      MODULO=m;   value=0;  
+//   } 
+
+   public  ImuZp(ImuZp src) {  
+      MODULO=src.MODULO;   value=src.value;  
+   }
+
+   //------------------------------------------------------   
+
+   public static boolean isPrime(long v) {  
+      if(v<=1) {  return false;    }
+      //[ 設 V=M*N, M<=N, 則 V>=M*M (, sqrt(V)>=M )
+      long f=2;  //: f是可能之因數, 除2外皆是奇數  
+//    cout.pc(v).pc(f).pn(v%f);
+      if(f*f<=v && v%f==0) return false; 
+      for(f=3; f*f<=v ; f+=2) { //: 只試奇數
+         if(v%f==0) return false;
+      } 
+      return true;
+   }
+
+
+   public static void assertPrime(int m) {
+      if(isPrime(m)) return;
+      throw new RuntimeException("illegal modulo: "+m);    
+   }
+
+   public int to_int() {  return value;  }
+   public int getModulo() {  return MODULO; }
+
+   public final String toString() { 
+      return  String.valueOf(value) ;  
+   }
+   public boolean equals(ImuZp v2) { return (value==v2.value);  }
+   public final boolean equals(Object d2) {  return equals((ImuZp)d2); }
+   public final int hashCode() {  return value ;  }
+
+   final ImuZp reduce() {   
+      final int N=getModulo();
+      if(value>=0) {  value %= N ; }
+      else {  
+         final int neg=(-value)%N;
+         value= (neg==0)? 0: N-neg;  
+//         value=N-((-value)%N);
+//         if(value==N) {  value=0; } 
+      }
+      return this;
+   }
+   
+   //[--------  implement DuplicableI   ---------   
+   public MuZp duplicate() {  
+      return new MuZp(this);   
+   }
+   //]--------  implement DuplicableI   ---------   
+
+   //[-------- implements PrintableI  
+   public final void printTo(TxOStream ooo) {  
+      ooo.p(value);  
+   }
+   public final void widthPrintTo(int w, TxOStream ooo) {  
+      ooo.wp(w,value); 
+   }
+   //]-------- implements PrintableI     
+
+   public final ImuZp add(ImuZp v2) {  
+      return new ImuZp(MODULO, value+v2.value);    
+   }
+   public final ImuZp sub(ImuZp v2) {  
+      return new ImuZp(MODULO, value-v2.value);    
+   }
+   public final ImuZp mul(ImuZp v2) {  
+      return  new ImuZp(MODULO, value*v2.value);   
+   }
+   public final ImuZp div(ImuZp v2) {  
+      return  this.mul(v2.inv());   
+   }
+
+   public final ImuZp neg() {  return new ImuZp(MODULO, -value);   }
+
+   public final ImuZp inv() {   
+      if(this.value==0) {  
+         throw new ArithmeticException("zero divider");  
+      }   
+      final longRef M=new longRef(), N=new longRef();
+      ImuRtn.gcd_coef(this.value, getModulo(), M, N);
+         //: so that  1 = M * this.value + N * mod
+      return new ImuZp(MODULO, (int)M._);  
+   }
+
+   public final ImuZp pow(int n) {    
+      MuZp t=new MuZp(MODULO, 1) ;
+      if(n>=0) {
+         for(int i=1; i<=n; ++i) t.mulBy(this) ;
+      }
+      else {
+         MuZp b=new MuZp(this.inv()) ;
+         for(int i=1; i<=(-n); ++i) t.mulBy(b) ;
+      }
+      return t ;
+   }
+   
+   //--------------------------------
+
+   public final boolean eq(ImuZp v2) {  return value==v2.value; }
+   public final boolean ne(ImuZp v2) {  return value!=v2.value; }
+
+   public final boolean isZero() {  return (value==0);  }
+   public final boolean notZero() {  return (value!=0);  }
+   public final boolean eq0() {  return (value==0);  }
+   public final boolean ne0() {  return (value!=0);  }
+ 
+   //-----------------------------------------------
+
+   public static void pAddTable(int mod) {
+      for(int i=0; i<mod; i++) {
+         for(int j=0; j<mod; j++) {
+            cout.pt((i+j)%mod); 
+         } 
+         cout.pn();
+      }
+   }
+   public static void pMulTable(int mod) {
+      for(int i=0; i<mod; i++) {
+         for(int j=0; j<mod; j++) {
+            cout.pt((i*j)%mod); 
+         } 
+         cout.pn();
+      }
+   }
+   public static void pNegTable(int mod) {
+      cout.pt(0); 
+      for(int i=1; i<mod; i++) {
+         cout.pt(mod-i); 
+      } 
+   }
+   public static void pInvTable(int mod) {
+
+//>>>>>>
+
+   }
+  
+}

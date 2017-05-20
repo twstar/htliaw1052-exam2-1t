@@ -1,0 +1,113 @@
+package tw.fc;
+
+public class DynamicArray //:  這個class白做了
+                          extends java.util.ArrayList<Object>
+{
+//   int numObj=0;          //: available index
+//   private Object[] _array;        //: 可自動增長
+//   final int DELTA_SIZE;  //: 初始量及每次增長量
+
+   //--------------------------------------------
+
+   public   DynamicArray(int capacity) {  super(capacity); }
+
+//   public   DynamicArray(delta) {
+   public   DynamicArray() {
+      super(32); //: 預設capacity
+//      DELTA_SIZE=delta;
+//      _array=new Object[DELTA_SIZE]; 
+   }
+   //---------------------
+/*
+   private void assertValidIndex(int index) {
+      if(index<0 || index>=numObj) {
+         throw new IllegalArgumentException("index error: "+index);
+      }
+   }
+*/
+
+//I   public int size()
+/////   public final int size() {  return numObj; }
+
+/*
+   private void expand() {
+      final Object[] newArray=
+         new Object[_array.length+DELTA_SIZE];
+      for(int i=0; i<_array.length; i++) {
+         newArray[i]=_array[i];
+      }
+      _array=newArray; 
+   }
+*/
+
+   public final void insert(Object ob, int index) {
+      super.add(index, ob);
+/*
+      if(index!=numObj) {  assertValidIndex(index); }
+      if(indexOf(ob)>=0) { 
+         throw new IllegalArgumentException("duplicate-add");
+      }
+      if(numObj>=_array.length) {  this.expand();  }
+      for(int i=numObj-1; i>=index; i--) { //: 向底層挪位
+         _array[i+1]=_array[i];
+      }
+      _array[index]=ob;
+      numObj++;
+*/
+   }
+
+   public final void append(Object ob) { 
+      super.add(ob);
+//      this.insert(ob, numObj);
+   }
+
+   public final void delete(Object ob) {
+      int idx=indexOf(ob);
+      if(idx<0) {
+         throw new IllegalArgumentException("not added");
+      }
+      else {
+         super.remove(idx);
+/*
+         for(idx++; idx<numObj; idx++) {
+            _array[idx-1]=_array[idx];
+         } 
+         _array[--numObj]=null;
+         numObj--; 
+*/
+      }
+   }
+
+   public final int indexOf(Object s) {
+      return super.indexOf(s);
+/*
+      for(int i=0; i<numObj; i++) {
+         if(_array[i]==s) return i; 
+      }
+      return -1;  //: not belong
+*/
+   }
+
+   public final Object at(int index) {
+      return get(index);
+//      assertValidIndex(index);
+//      return _array[index];
+   }
+
+   public void moveToFirst(Object ob) {
+      final int idx=indexOf(ob);
+      if(idx<0) {
+         throw new IllegalArgumentException("object not in list"); 
+      } 
+      if(idx==0) return;  // 本來就在first
+      super.remove(idx);
+      super.add(0,ob);
+/*
+      for(int i=idx-1; i>=0; i--) {
+         _array[i+1]=_array[i];
+      }
+      _array[0]=ob;
+*/
+   }
+
+}
